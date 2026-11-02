@@ -3,10 +3,8 @@ title: "Self-healing remote-support agent rollout with Group Policy"
 summary: "An idempotent PowerShell check, run by a GPO scheduled task, that installs and repairs a remote-support agent on every domain workstation."
 tags: ["Active Directory", "Group Policy", "PowerShell", "MeshCentral"]
 order: 3
-draft: true
 ---
 
-<!-- ASK NICO: OK to publish this? Written with no employer name, server names, share paths, OU names, or device counts. -->
 
 ## Problem
 

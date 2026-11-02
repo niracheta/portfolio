@@ -5,7 +5,6 @@ tags: ["Unraid", "Docker", "Linux", "UniFi", "Tailscale", "Local LLMs"]
 order: 4
 ---
 
-<!-- ASK NICO: OK to mention that an AI agent running on this hardware assists with operations? Recommended: yes, it is a real skill, and an interviewer may ask. -->
 
 ## Problem
 

@@ -2,7 +2,7 @@ export const site = {
   name: 'Nicolas Iracheta',
   title: 'Network Technician',
   location: 'Rio Grande Valley, Texas',
-  email: '', // from CONTENT-DECISIONS.md
+  email: '', // decision 2026-11-02: no public email, LinkedIn only
   linkedin: '', // full URL
   github: '', // full URL
   description:
@@ -16,6 +16,7 @@ export const site = {
     'CompTIA Secure Infrastructure Specialist (CSIS)',
     'CompTIA IT Operations Specialist (CIOS)',
     'AWS Certified Cloud Practitioner',
+    'LPI Linux Essentials',
     'ITIL Foundation (Axelos)',
   ],
 };
