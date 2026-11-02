@@ -6,7 +6,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/nicolas-iracheta-175b62162/',
   github: '', // full URL
   description:
-    'Network technician in the Rio Grande Valley of Texas, with a B.S. in Information Technology and an M.S. in IT Management. I maintain a self-hosted lab environment built on Docker, Cloudflare, Home Assistant, and local AI. This site documents selected projects, including the approach, results, and lessons learned.',
+    'Network technician in the Rio Grande Valley, Texas. I work with enterprise networks, Linux servers, and Active Directory. This site documents a few projects I have built, including the approach, results, and lessons learned.',
   // Names taken from the base resume and certificate files in Nextcloud.
   certs: [
     'CompTIA A+',
