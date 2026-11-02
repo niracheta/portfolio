@@ -42,3 +42,6 @@ code, pre { background: var(--code-bg); border-radius: 4px; font-size: .9em; }
 pre { padding: 1rem; overflow-x: auto; }
 footer.site { border-top: 1px solid var(--border); padding: 1.5rem 0; color: var(--muted); font-size: .9rem; }
 @media print { header.site nav, footer.site { display: none; } a { color: inherit; } }
+table { display: block; overflow-x: auto; border-collapse: collapse; margin: 1rem 0; }
+th, td { border: 1px solid var(--border); padding: .35rem .6rem; text-align: left; }
+img { max-width: 100%; height: auto; }
