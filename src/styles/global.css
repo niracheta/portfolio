@@ -1,0 +1,44 @@
+:root {
+  --fg: #1b1f24;
+  --muted: #57606a;
+  --bg: #ffffff;
+  --accent: #1f5fbf;
+  --border: #d8dee4;
+  --code-bg: #f3f5f7;
+  color-scheme: light dark;
+}
+@media (prefers-color-scheme: dark) {
+  :root { --fg: #e6edf3; --muted: #9da7b3; --bg: #0f1216; --accent: #6ea8fe; --border: #2b323b; --code-bg: #161b22; }
+}
+* { box-sizing: border-box; }
+html { font-size: 17px; }
+body {
+  margin: 0; color: var(--fg); background: var(--bg);
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  line-height: 1.6;
+}
+.wrap { max-width: 46rem; margin: 0 auto; padding: 0 1.25rem; }
+header.site { border-bottom: 1px solid var(--border); padding: 1rem 0; }
+header.site .wrap { display: flex; flex-wrap: wrap; gap: 1rem; align-items: baseline; justify-content: space-between; }
+header.site a.brand { font-weight: 700; color: var(--fg); text-decoration: none; }
+nav a { margin-left: 1rem; color: var(--muted); text-decoration: none; }
+nav a[aria-current="page"], nav a:hover { color: var(--accent); }
+main { padding: 2.5rem 1.25rem 4rem; }
+h1 { font-size: 2rem; line-height: 1.2; margin: 0 0 .5rem; }
+h2 { font-size: 1.25rem; margin-top: 2.5rem; }
+a { color: var(--accent); }
+.lede { font-size: 1.15rem; color: var(--muted); }
+.cards { list-style: none; padding: 0; display: grid; gap: 1rem; }
+.cards li { border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.25rem; }
+.cards h3 { margin: 0 0 .25rem; font-size: 1.05rem; }
+.cards p { margin: 0; color: var(--muted); }
+.tags { display: flex; flex-wrap: wrap; gap: .4rem; padding: 0; list-style: none; margin: .5rem 0 0; }
+.tags li { font-size: .8rem; border: 1px solid var(--border); border-radius: 999px; padding: 0 .6rem; color: var(--muted); }
+.role { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem; margin-top: 1.5rem; }
+.role h3 { margin: 0; font-size: 1.05rem; }
+.role span, .org { color: var(--muted); }
+.org { margin: 0; font-style: italic; }
+code, pre { background: var(--code-bg); border-radius: 4px; font-size: .9em; }
+pre { padding: 1rem; overflow-x: auto; }
+footer.site { border-top: 1px solid var(--border); padding: 1.5rem 0; color: var(--muted); font-size: .9rem; }
+@media print { header.site nav, footer.site { display: none; } a { color: inherit; } }
