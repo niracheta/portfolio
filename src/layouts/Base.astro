@@ -43,7 +43,7 @@ const canonical = new URL(path, Astro.site).toString();
         {site.email && <a href={`mailto:${site.email}`}>{site.email}</a>}
         {site.linkedin && <> · <a href={site.linkedin} target="_blank" rel="noopener noreferrer">LinkedIn</a></>}
         {site.github && <> · <a href={site.github} target="_blank" rel="noopener noreferrer">GitHub</a></>}
-        <p>Self-hosted on my homelab, served through a Cloudflare tunnel.</p>
+        <p>This site runs on my homelab, behind a Cloudflare tunnel.</p>
       </div>
     </footer>
   </body>

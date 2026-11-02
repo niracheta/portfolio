@@ -6,7 +6,7 @@ export const site = {
   linkedin: 'https://www.linkedin.com/in/nicolas-iracheta-175b62162/',
   github: '', // full URL
   description:
-    'Network technician with a BS in IT and an MS in IT Management. I run a self-hosted homelab with Docker, Cloudflare, Home Assistant, and local AI inference, and I write up how it is built.',
+    "I'm a network technician in the Rio Grande Valley of Texas, with a BS in IT and an MS in IT Management. At home I run a self-hosted lab with Docker, Cloudflare tunnels, Home Assistant, and local AI. These are write-ups of things I've built and fixed, including what went wrong.",
   // Names taken from the base resume and certificate files in Nextcloud.
   certs: [
     'CompTIA A+',

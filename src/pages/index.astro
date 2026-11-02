@@ -8,7 +8,7 @@ const projects = (await getCollection('projects', ({ data }) => !data.draft))
 ---
 <Base>
   <h1>{site.name}</h1>
-  <p class="lede">{site.title} in the {site.location}. {site.description}</p>
+  <p class="lede">{site.description}</p>
 
   <h2>Featured projects</h2>
   <ul class="cards">

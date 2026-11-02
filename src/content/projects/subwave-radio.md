@@ -1,28 +1,35 @@
 ---
 title: "Self-hosted AI radio station"
-summary: "A 24/7 internet radio station with LLM-written DJ breaks, local text-to-speech on a GPU box, and a public stream behind a Cloudflare tunnel."
+summary: "A 24/7 internet radio station with AI-written DJ breaks, voices generated on my own GPU box, and a public stream behind a Cloudflare tunnel."
 tags: ["Docker", "Cloudflare", "Icecast", "TTS", "Python", "LLM"]
 order: 1
 ---
 
-## Problem
+## Why I built it
 
-I wanted a radio station for my household that sounded like a real one: a music library on my own server, DJ personas that talk between songs, and a stream anyone in the family could open on a phone. Cloud text-to-speech works, but it bills per character and every break is sent to a third party.
+I wanted a station for the house that sounds like actual radio: music from my own library, DJs who talk between songs, and a stream anyone in the family can open on their phone. Cloud text-to-speech would have worked, but it charges by the character and sends every DJ break to someone else's servers.
 
-## What I built
+## How it works
 
-- The station runs as a container on my Unraid server and streams through Icecast.
-- DJ scripts come from an LLM. The voices are rendered by Chatterbox Turbo, an open-source TTS model, running on a separate NVIDIA GPU box reached over Tailscale.
-- A small Python adapter ("shim") sits between the station and the TTS server. It translates the station's `/speak` and `/health` contract to the TTS server's API.
-- The public stream is published through a Cloudflare tunnel, so no ports are open on my router. A Cloudflare rate-limit rule protects the stream endpoint.
+The station runs as a container on my Unraid server and streams through Icecast. An LLM writes the DJ breaks, and Chatterbox Turbo, an open-source TTS model, turns them into speech on a separate NVIDIA GPU box that the server reaches over Tailscale.
 
-## Problems I solved along the way
+The station and the TTS server don't speak the same API, so I wrote a small Python adapter (I call it the shim) that translates the station's `/speak` and `/health` calls into requests the TTS server understands.
 
-**Every listener showed the same IP.** The station and the tunnel connector sat on different Docker networks, so every listener appeared as the Docker gateway address. I configured the station's Caddy reverse proxy to trust forwarded headers only from the Docker subnet. Listener logs now show real client IPs.
+The public stream goes out through a Cloudflare tunnel, so nothing is port-forwarded on my router, and a Cloudflare rate-limit rule sits in front of the stream endpoint.
 
-**False alarms hid a real fault.** The shim sent `X-TTS-Fell-Back: false` on every healthy render. The station checks that header for truthiness, and the string "false" is truthy in JavaScript, so every correct render was logged as a failure. That noise buried the one persona whose voice really was being swapped. I changed the shim to send the header only when a fallback happened, and to read the live voice list from the TTS server instead of a hardcoded copy.
+## Problems I ran into
 
-**The DJs mispronounced things.** I measured intelligibility by transcribing renders of 11 real on-air lines with Whisper and scoring word error rate (WER). Then I changed one variable at a time:
+### Every listener had the same IP
+
+The station and the tunnel connector were on different Docker networks, so every listener showed up as the Docker gateway address. I set the station's Caddy reverse proxy to trust forwarded headers from the Docker subnet only, and the logs now show real client IPs.
+
+### Healthy renders were logged as failures
+
+The shim sent `X-TTS-Fell-Back: false` on every successful render. The station only checks whether that header has a value, and in JavaScript the string "false" counts as true, so every good render got logged as a fallback. All that noise hid the one DJ whose voice really was being swapped out. Now the shim sends the header only when a fallback actually happens, and it pulls the voice list from the TTS server instead of keeping its own hardcoded copy.
+
+### The DJs mispronounced things
+
+Instead of judging by ear, I took 11 real on-air lines, rendered them, transcribed the audio with Whisper, and scored the word error rate (WER). Then I changed one setting at a time:
 
 | Shim setting | WER |
 |---|---|
@@ -30,13 +37,14 @@ I wanted a radio station for my household that sounded like a real one: a music 
 | Text prep + 120-character chunks | 7.7% |
 | Text prep + 100-character chunks (deployed) | 2.8% |
 
-Text prep turns times and numbers into words, splits CamelCase, and turns semicolons and dashes into plain pauses. I also tested a newer model, Breeze TTS 2, against the same lines. It scored 17.7% WER, cut off 3 of 11 lines, and ran slower than real time on this GPU, so I kept Chatterbox.
+Text prep means spelling out times and numbers, splitting CamelCase words, and swapping semicolons and dashes for plain pauses. The surprise was chunk size: text prep on its own barely moved the number, and dropping from 120 to 100 characters is what took it down to 2.8%.
 
-## Results
+I also tried a newer model, Breeze TTS 2, on the same lines. It scored 17.7% WER, cut off 3 of the 11 lines, and couldn't keep up with real time on this GPU, so Chatterbox stayed.
 
-- Word error rate down from 8.1% to 2.8% on the same test set.
-- Every change is behind a switch in the shim and has a backed-up rollback, so I can turn any of them off without redeploying.
+## Where it landed
+
+WER went from 8.1% to 2.8% on the same test set. Each change has its own switch in the shim and a backup to roll back to, so I can turn any of them off without redeploying.
 
 ## What I'd do differently
 
-I would build the measurement harness first. Most of the early tuning was done by ear, and the Whisper-scored test set gave clearer answers in an afternoon than weeks of listening had.
+Build the test harness first. I spent weeks tuning by ear, and the Whisper-scored test set answered more in one afternoon than all that listening did.
