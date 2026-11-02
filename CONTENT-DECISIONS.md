@@ -1,7 +1,7 @@
 # Content decisions (Nico, 2026-11-02)
 
 - Public email: none. LinkedIn only.
-- LinkedIn URL: TBD (blocker for go-live)
+- LinkedIn URL: https://www.linkedin.com/in/nicolas-iracheta-175b62162/
 - GitHub: not listed
 - Phone on site: no
 - Featured projects: subwave-radio, cloudflare-offline-page, meshagent-gpo-rollout, homelab-platform
@@ -17,4 +17,3 @@
 
 ## Blockers for go-live
 - PLACEHOLDER PDF in public/ until Nico exports the real resume
-- LinkedIn URL
