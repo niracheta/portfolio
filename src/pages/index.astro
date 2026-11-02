@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { site } from '../data/site';
+const projects = (await getCollection('projects', ({ data }) => !data.draft))
+  .sort((a, b) => a.data.order - b.data.order)
+  .slice(0, 3);
+---
+<Base>
+  <h1>{site.name}</h1>
+  <p class="lede">{site.title} in the {site.location}. {site.description}</p>
+
+  <h2>Featured projects</h2>
+  <ul class="cards">
+    {projects.map((p) => (
+      <li>
+        <h3><a href={`/projects/${p.id}/`}>{p.data.title}</a></h3>
+        <p>{p.data.summary}</p>
+      </li>
+    ))}
+  </ul>
+  <p><a href="/projects/">All projects</a> · <a href="/resume/">Resume</a></p>
+
+  <h2>Certifications</h2>
+  <ul>{site.certs.map((c) => <li>{c}</li>)}</ul>
+</Base>

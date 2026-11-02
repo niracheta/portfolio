@@ -1,0 +1,36 @@
+---
+import Base from '../layouts/Base.astro';
+import { site } from '../data/site';
+// Titles, employers, and dates are verbatim from the base resume. No phone or street address on the public page.
+---
+<Base title="Resume" description="Resume for Nicolas Iracheta: network technician with a BS in IT, an MS in IT Management, CompTIA Security+ and Network+, and hands-on infrastructure and support experience.">
+  <h1>Resume</h1>
+  <p><a href="/Nicolas_Iracheta_Resume.pdf">Download PDF</a></p>
+
+  <h2>Experience</h2>
+  <div class="role"><h3>Network Technician</h3><span>Jan 2026 to present</span></div>
+  <p class="org">TelePro Communications, Mission, TX</p>
+  <ul>
+    <li>Provide Tier 1 and Tier 2 support for enterprise network and desktop environments by phone, email, and ticketing system.</li>
+    <li>Deploy, image, and troubleshoot Windows desktops and servers; manage Active Directory users and accounts.</li>
+    <li>Monitor network and server health and resolve connectivity issues across fiber and copper infrastructure.</li>
+    <li>Enforce endpoint protection, patch deployment, and baseline compliance; document resolutions in the ticketing system.</li>
+  </ul>
+
+  <div class="role"><h3>Linux Systems Administrator / Infrastructure Engineer</h3><span>Oct 2022 to present</span></div>
+  <p class="org">Home Lab Server Environment, Alton, TX</p>
+  <ul>
+    <li>Built and administer a multi-service Linux server providing centralized storage, virtualized applications, and network file sharing.</li>
+    <li>Manage KVM/QEMU virtual machines and containers, including snapshots, backup scheduling, and resource allocation.</li>
+    <li>Harden access with role-based permissions, SSH key authentication, and firewall rules following CIS benchmarks.</li>
+    <li>Document configurations, procedures, and troubleshooting guides for repeatable administration. See <a href="/projects/">projects</a>.</li>
+  </ul>
+
+  <h2>Education</h2>
+  <!-- ASK NICO: MS completion date (base resume says "Expected May 2026"). -->
+  <div class="role"><h3>Master of Science, IT Management</h3><span>Western Governors University</span></div>
+  <div class="role"><h3>Bachelor of Science, Information Technology</h3><span>Western Governors University, Sept 2025</span></div>
+
+  <h2>Certifications</h2>
+  <ul>{site.certs.map((c) => <li>{c}</li>)}</ul>
+</Base>
