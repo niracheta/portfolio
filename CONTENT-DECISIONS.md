@@ -15,5 +15,10 @@
 - astro 7.4.5 (z imported from astro/zod; `astro:content` z is deprecated in 7)
 - node (dev) v26.7.0; Docker build uses node:24-alpine (astro engines: node >=22.23.4)
 
+## Resume PDF
+- Web copy: phone (work number) kept, email stripped, US Letter, 0.6in margins, 2 pages. Built from Nico's docx via Gotenberg LibreOffice.
+- ITIL cert and CIS-benchmarks bullet restored per Nico 2026-11-02.
+- Master (with email) lives in Nextcloud /Vulcan/Projects/portfolio/, not in this repo.
+
 ## Blockers for go-live
-- PLACEHOLDER PDF in public/ until Nico exports the real resume
+- none
