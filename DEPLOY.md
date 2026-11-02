@@ -7,10 +7,17 @@
 
 ## Current state (2026-11-02)
 
-- Running on Unraid since 2026-11-02 from an image **built on Unraid** (`/mnt/user/appdata/portfolio/src`, `docker build -t ghcr.io/niracheta/portfolio:latest .`), tagged with the GHCR name so switching to CI images is just a pull.
+- **Live** at https://portfolio.nirachetahomelab.org, running the CI-built image from GHCR (public package, anonymous pull works).
+- GitHub: `github.com/niracheta/portfolio` (public). Agent pushes with `~/.ssh/github_ed25519` (account key, title "vulcan-hermes@IHome github 2026-11-02") via `core.sshCommand` in the profile's global git config.
 - Template: `/boot/config/plugins/dockerMan/templates-user/my-portfolio.xml` (bridge, 8095->8080, `--read-only --tmpfs /tmp --security-opt no-new-privileges --restart unless-stopped`).
-- Verified on host: healthy, 200/404 routes, CSP + 4 security headers, `/healthz` ok, rootfs read-only, runs as uid 101, ~15 MiB RAM.
-- Until GHCR has the image, "Check for updates" in the Unraid UI will report the image as unavailable. That is expected.
+- Verified: healthy, 200/404 routes over the tunnel, CSP + 4 security headers, `/healthz` ok, rootfs read-only, uid 101, ~15 MiB RAM; public resume PDF sha256 matches the repo copy.
+
+## Resume PDF
+
+- Master: `/Vulcan/Projects/portfolio/Nicolas Iracheta Resume.docx` (+ `.pdf`), includes email; for applications. Original pre-edit file kept as `...orig-20261102.docx`.
+- Web copy (`public/Nicolas_Iracheta_Resume.pdf`): same content, **email removed**, phone kept (work number).
+- Convert docx to PDF with the Paperless Gotenberg container: `curl -F files=@resume.docx http://192.168.68.80:3000/forms/libreoffice/convert -o out.pdf`. The first call after idle can 503 (LibreOffice cold start); retry once.
+- The leak tests do not read PDFs. Check a new PDF's text by hand before committing (no email, no street address, no private terms).
 
 ## Manual rebuild on Unraid (no GitHub needed)
 
@@ -24,7 +31,7 @@ ssh ... 'cd /mnt/user/appdata/portfolio/src && docker build -t ghcr.io/niracheta
 # then Unraid > Docker > Add Container > template "portfolio" > Apply (or re-run the docker run line from DEPLOY history)
 ```
 
-## Update flow (once GitHub is wired)
+## Update flow
 
 1. Edit Markdown in `src/content/projects/` or pages in `src/pages/`.
 2. `npm run check` -> must end `fail 0`.
