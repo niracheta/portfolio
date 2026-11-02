@@ -1,33 +1,33 @@
 ---
-title: "My homelab: storage, containers, and local AI"
-summary: "The Unraid server, network, and GPU box that run my family's services. I built it from parts and run it the way I'd want a production environment run."
+title: "Homelab infrastructure: storage, containers, and local AI"
+summary: "The Unraid server, network, and GPU system that host my household's services, assembled from components and operated with production practices."
 tags: ["Unraid", "Docker", "Linux", "UniFi", "Tailscale", "Local LLMs"]
 order: 4
 ---
 
-## Why
+## Background
 
-I wanted my family's media, photos, documents, and passwords on hardware I control, and I wanted to run it with the same habits I'd expect at work: backups, monitoring, changes that are written down, and a way to undo any of them.
+I wanted my household's media, photos, documents, and passwords hosted on hardware I control, and managed with the practices I would expect in a professional environment: backups, monitoring, documented changes, and a rollback path for every change.
 
-## What's in it
+## Components
 
-The server runs Unraid on an Intel i5-12600K with an Intel Arc A770, which I built from parts. The array has one 8 TB parity drive and three data drives, and a CyberPower 1500 VA UPS gives it time to shut down cleanly when the power goes out.
+The server runs Unraid on an Intel Core i5-12600K with an Intel Arc A770, assembled from individual components. The array consists of one 8 TB parity drive and three data drives, and a CyberPower 1500 VA UPS allows a clean shutdown during a power outage.
 
-On top of that run somewhere between 50 and 60 Docker containers, depending on the month: Jellyfin, Immich, Nextcloud, Paperless-ngx, Vaultwarden, Navidrome, MeshCentral, AdGuard, a private search engine, and more. Each container keeps its config in appdata, so I can rebuild any of them from scratch.
+The server hosts 50 to 60 Docker containers, depending on current projects, including Jellyfin, Immich, Nextcloud, Paperless-ngx, Vaultwarden, Navidrome, MeshCentral, AdGuard Home, and a private search engine. Container configuration is persisted to appdata, so any container can be rebuilt from scratch.
 
-The network is a UniFi Cloud Gateway with VLANs. Public services only leave through a Cloudflare tunnel, so there are no open inbound ports, and I do admin work over Tailscale.
+The network runs on a UniFi Cloud Gateway with VLANs. Public services are published only through a Cloudflare Tunnel, so no inbound ports are open, and remote administrative access goes through Tailscale.
 
-For local AI, an NVIDIA DGX Spark runs a 27B-parameter model through SGLang, along with the radio station's text-to-speech. Anything sensitive, and most batch work, stays on hardware I run instead of going to a cloud API.
+For local AI, an NVIDIA DGX Spark runs a 27-billion-parameter language model through SGLang, along with the radio station's text-to-speech service. Sensitive and batch workloads run on local hardware rather than a cloud API.
 
-An AI agent running on the platform handles the routine checks, writes daily health notes, and drafts changes. I review every change before it goes in.
+An AI agent running on the platform performs routine health checks, writes daily status notes, and drafts proposed changes. I review every change before it is applied.
 
-## How I run it
+## Operating practices
 
-- Least destructive fix first: repair before remove, restart before reboot, config change before hardware swap.
-- Measure before tuning. When I tuned the LLM server's memory settings, I tested a range and kept the one that left the most headroom, since other people run workloads on the same box.
-- Write it down. Every service has a runbook in my Nextcloud with its ports, its quirks, and the commands to check it's working.
-- Plan for failure. A Cloudflare Worker shows an outage page when the server is down ([write-up here](/projects/cloudflare-offline-page/)), and I'm setting up an offsite Proxmox node to be a backup target and an outside monitoring point.
+- Least disruptive fix first: repair before removal, a service restart before a reboot, and a configuration change before a hardware replacement.
+- Measure before tuning. When tuning the LLM server's memory allocation, I tested a range of settings and kept the one that preserved the most headroom, because the system is shared with other users.
+- Document everything. Each service has a runbook in Nextcloud covering ports, known issues, and verification commands.
+- Plan for failure. A Cloudflare Worker serves an outage page when the server is unavailable ([project write-up](/projects/cloudflare-offline-page/)), and I am setting up an offsite Proxmox node as a backup target and external monitoring point.
 
-## What I'd do differently
+## Lessons learned
 
-Offsite backups from day one, instead of adding them later. Parity covers a dead drive. It doesn't cover a dead house.
+I would implement offsite backups from the start rather than adding them later. Parity protects against a drive failure, but not against the loss of the entire site.

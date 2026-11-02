@@ -1,50 +1,51 @@
 ---
 title: "Self-hosted AI radio station"
-summary: "A 24/7 internet radio station with AI-written DJ breaks, voices generated on my own GPU box, and a public stream behind a Cloudflare tunnel."
+summary: "A 24/7 internet radio station with AI-generated DJ segments, speech synthesized on local GPU hardware, and a public stream published through a Cloudflare Tunnel."
 tags: ["Docker", "Cloudflare", "Icecast", "TTS", "Python", "LLM"]
 order: 1
 ---
 
-## Why I built it
+## Background
 
-I wanted a station for the house that sounds like actual radio: music from my own library, DJs who talk between songs, and a stream anyone in the family can open on their phone. Cloud text-to-speech would have worked, but it charges by the character and sends every DJ break to someone else's servers.
+I wanted a household radio station that behaved like a commercial one: music from my own library, DJ segments between songs, and a stream that family members could open on a phone. Cloud text-to-speech services would have worked, but they bill per character and send every script to a third party, so I chose to run speech synthesis locally.
 
-## How it works
+## Architecture
 
-The station runs as a container on my Unraid server and streams through Icecast. An LLM writes the DJ breaks, and Chatterbox Turbo, an open-source TTS model, turns them into speech on a separate NVIDIA GPU box that the server reaches over Tailscale.
+The station runs as a container on my Unraid server and streams through Icecast. An LLM writes the DJ segments, and Chatterbox Turbo, an open-source TTS model, renders them to audio on a separate NVIDIA GPU system reached over Tailscale.
 
-The station and the TTS server don't speak the same API, so I wrote a small Python adapter (I call it the shim) that translates the station's `/speak` and `/health` calls into requests the TTS server understands.
+Because the station and the TTS server use different APIs, I wrote a small Python adapter (the "shim") that translates the station's `/speak` and `/health` calls into requests the TTS server accepts.
 
-The public stream goes out through a Cloudflare tunnel, so nothing is port-forwarded on my router, and a Cloudflare rate-limit rule sits in front of the stream endpoint.
+The public stream is published through a Cloudflare Tunnel, so no ports are forwarded on my router, and a Cloudflare rate-limiting rule protects the stream endpoint.
 
-## Problems I ran into
+## Issues resolved
 
-### Every listener had the same IP
+### All listeners reported the same IP address
 
-The station and the tunnel connector were on different Docker networks, so every listener showed up as the Docker gateway address. I set the station's Caddy reverse proxy to trust forwarded headers from the Docker subnet only, and the logs now show real client IPs.
+The station and the tunnel connector were on different Docker networks, so every listener appeared as the Docker gateway address. I configured the station's Caddy reverse proxy to trust forwarded headers only from the Docker subnet. The logs now record real client IP addresses.
 
-### Healthy renders were logged as failures
+### Successful renders logged as failures
 
-The shim sent `X-TTS-Fell-Back: false` on every successful render. The station only checks whether that header has a value, and in JavaScript the string "false" counts as true, so every good render got logged as a fallback. All that noise hid the one DJ whose voice really was being swapped out. Now the shim sends the header only when a fallback actually happens, and it pulls the voice list from the TTS server instead of keeping its own hardcoded copy.
+The shim sent `X-TTS-Fell-Back: false` on every successful render. The station only checks whether that header has a value, and in JavaScript the string "false" evaluates as true, so every successful render was logged as a fallback. That noise concealed the one persona whose voice actually was being substituted. I changed the shim to send the header only when a fallback occurs, and to read the voice list from the TTS server rather than from a hardcoded copy.
 
-### The DJs mispronounced things
+### Pronunciation errors
 
-Instead of judging by ear, I took 11 real on-air lines, rendered them, transcribed the audio with Whisper, and scored the word error rate (WER). Then I changed one setting at a time:
+To measure intelligibility objectively, I rendered 11 real on-air lines, transcribed the audio with Whisper, and scored the word error rate (WER). I then changed one setting at a time:
 
 | Shim setting | WER |
 |---|---|
-| Original (150-character chunks, no text prep) | 8.1% |
-| Text prep + 120-character chunks | 7.7% |
-| Text prep + 100-character chunks (deployed) | 2.8% |
+| Original (150-character chunks, no text preparation) | 8.1% |
+| Text preparation + 120-character chunks | 7.7% |
+| Text preparation + 100-character chunks (deployed) | 2.8% |
 
-Text prep means spelling out times and numbers, splitting CamelCase words, and swapping semicolons and dashes for plain pauses. The surprise was chunk size: text prep on its own barely moved the number, and dropping from 120 to 100 characters is what took it down to 2.8%.
+Text preparation spells out times and numbers, splits CamelCase words, and converts semicolons and dashes into plain pauses. The data showed that chunk size was the deciding factor: the first round of changes reduced WER only slightly, while reducing chunks from 120 to 100 characters brought it down to 2.8%.
 
-I also tried a newer model, Breeze TTS 2, on the same lines. It scored 17.7% WER, cut off 3 of the 11 lines, and couldn't keep up with real time on this GPU, so Chatterbox stayed.
+I also evaluated a newer model, Breeze TTS 2, against the same lines. It scored 17.7% WER, truncated 3 of the 11 lines, and could not render faster than real time on this GPU, so I kept Chatterbox.
 
-## Where it landed
+## Results
 
-WER went from 8.1% to 2.8% on the same test set. Each change has its own switch in the shim and a backup to roll back to, so I can turn any of them off without redeploying.
+- Word error rate reduced from 8.1% to 2.8% on a fixed test set.
+- Each change is controlled by its own setting in the shim and has a backup for rollback, so any change can be disabled without redeploying.
 
-## What I'd do differently
+## Lessons learned
 
-Build the test harness first. I spent weeks tuning by ear, and the Whisper-scored test set answered more in one afternoon than all that listening did.
+I would build the measurement harness at the start. Early tuning was done by ear over several weeks, and the Whisper-scored test set produced clearer answers in a single afternoon.
