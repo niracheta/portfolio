@@ -1,5 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { existsSync, readFileSync } from 'node:fs';
 import { assertBuilt, textFiles, read, rel } from './helpers.mjs';
 
 // Anything matching these must never ship on a public page.
@@ -14,6 +15,21 @@ const FORBIDDEN = [
   { name: 'Tailscale auth key', re: /tskey-[A-Za-z0-9-]{10,}/ },
   { name: 'Private key block', re: /-----BEGIN [A-Z ]*PRIVATE KEY-----/ },
 ];
+
+// Private terms (machine names, internal domains, share names) live in an
+// untracked file so the public repo doesn't publish the list itself.
+// One term per line; blank lines and #comments ignored.
+const PRIVATE_TERMS = new URL('./private-terms.txt', import.meta.url);
+if (existsSync(PRIVATE_TERMS)) {
+  const terms = readFileSync(PRIVATE_TERMS, 'utf8')
+    .split('\n')
+    .map((l) => l.trim())
+    .filter((l) => l && !l.startsWith('#'))
+    .map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+  if (terms.length) {
+    FORBIDDEN.push({ name: `private terms (${terms.length})`, re: new RegExp(`\\b(${terms.join('|')})\\b`, 'i') });
+  }
+}
 
 test('dist exists', () => assertBuilt());
 
